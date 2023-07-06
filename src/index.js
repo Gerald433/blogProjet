@@ -25,14 +25,32 @@ const createArticles = articles => {
   });
   articleContainerElement.innerHTML = "";
   articleContainerElement.append(...articlesDOM);
+  const deleteButtons = articleContainerElement.querySelectorAll(".btn-danger");
+  deleteButtons.forEach(button => {
+    button.addEventListener("click", async event => {
+      try {
+        const target = event.target;
+        const articleId = target.dataset.id;
+        const response = await fetch(
+          `https://restapi.fr/api/article/${articleId}`,
+          {
+            method: "DELETE"
+          }
+        );
+        const body = await response.json();
+        console.log(body);
+        fetchArticle();
+      } catch (e) {
+        console.log("e : ", e);
+      }
+    });
+  });
 };
 
 const fetchArticle = async () => {
   try {
     const response = await fetch("https://restapi.fr/api/article");
     let articles = await response.json();
-    // Restapi retourne un objet s'il n'y a qu'un seul article
-    // nous devons donc le transformer en tableau :
     if (!Array.isArray(articles)) {
       articles = [articles];
     }
