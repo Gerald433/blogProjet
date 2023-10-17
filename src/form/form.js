@@ -1,5 +1,6 @@
 import "../assets/styles/styles.scss";
 import "./form.scss";
+import { openModal } from "../assets/javascripts/modal";
 
 const form = document.querySelector("form");
 const errorElement = document.querySelector("#errors");
@@ -26,7 +27,7 @@ initForm();
 
 // Nous remplissons tous les champs de notre formulaire en créant des références
 // et en utilisant les informations récupérées du serveur.
-const fillForm = article => {
+const fillForm = (article) => {
   const author = document.querySelector('input[name="author"]');
   const img = document.querySelector('input[name="img"]');
   const category = document.querySelector('input[name="category"]');
@@ -39,15 +40,20 @@ const fillForm = article => {
   content.value = article.content || "";
 };
 
-btnCancel.addEventListener("click", () => {
-  window.location.assign("/index.html");
+btnCancel.addEventListener("click", async () => {
+  const result = await openModal(
+    "Si vous quittez la page,vous allez perdre votre article"
+  );
+  if (result) {
+    window.location.assign("/index.html");
+  }
 });
 
 // Lorsque nous éditons, nous ne créons pas de nouvelle ressource sur le serveur.
 // Nous n’utilisons donc pas une requête POST mais une requête PATCH.
 // Pas PUT car nous ne remplaçons pas la ressource distante (nous gardons
 // la date de création et l’id).
-form.addEventListener("submit", async event => {
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formData = new FormData(form);
   const article = Object.fromEntries(formData.entries());
@@ -64,16 +70,16 @@ form.addEventListener("submit", async event => {
           method: "PATCH",
           body: json,
           headers: {
-            "Content-Type": "application/json"
-          }
+            "Content-Type": "application/json",
+          },
         });
       } else {
         response = await fetch("https://restapi.fr/api/article", {
           method: "POST",
           body: json,
           headers: {
-            "Content-Type": "application/json"
-          }
+            "Content-Type": "application/json",
+          },
         });
       }
       if (response.status < 299) {
@@ -85,7 +91,7 @@ form.addEventListener("submit", async event => {
   }
 });
 
-const formIsValid = article => {
+const formIsValid = (article) => {
   errors = [];
   if (
     !article.author ||
@@ -100,7 +106,7 @@ const formIsValid = article => {
   }
   if (errors.length) {
     let errorHTML = "";
-    errors.forEach(e => {
+    errors.forEach((e) => {
       errorHTML += `<li>${e}</li>`;
     });
     errorElement.innerHTML = errorHTML;
