@@ -6,7 +6,7 @@
   "homepage": "https://gerald433.github.io/blogProjet/",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "webpack": "webpack",
+    "build": "webpack",
     "start": "webpack serve",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
